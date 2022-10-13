@@ -12,7 +12,7 @@ const userSignUp = (req, res) => {
   });
 };
 
-const checkUser = (req, res) => {}
+const checkUser = (req, res) => {};
 
 const forgotPassword = (req, res) => {
   return res.status(200).json({
@@ -22,14 +22,15 @@ const forgotPassword = (req, res) => {
 };
 
 const userDelete = (req, res) => {
-    return res.status(200).json({
-        message: "delete user endpoint success"
-    })
-}
+  return res.status(200).json({
+    message: "delete user endpoint success",
+    data: req.body,
+  });
+};
 
 module.exports = {
   userLogin,
   userSignUp,
   forgotPassword,
-  userDelete
+  userDelete,
 };
