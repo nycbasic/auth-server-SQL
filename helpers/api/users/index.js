@@ -12,6 +12,8 @@ const userSignUp = (req, res) => {
   });
 };
 
+const checkUser = (req, res) => {}
+
 const forgotPassword = (req, res) => {
   return res.status(200).json({
     message: "forgot password endpoint success",
@@ -21,12 +23,13 @@ const forgotPassword = (req, res) => {
 
 const userDelete = (req, res) => {
     return res.status(200).json({
-        message: ""
+        message: "delete user endpoint success"
     })
 }
 
 module.exports = {
   userLogin,
   userSignUp,
-  forgotPassword
+  forgotPassword,
+  userDelete
 };
