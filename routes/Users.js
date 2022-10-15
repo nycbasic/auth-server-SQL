@@ -6,6 +6,7 @@ const {
   userSignUp,
   forgotPassword,
   userDelete,
+  checkUser,
 } = require("../helpers/api/users");
 
 // Route: POST /api/users/v1/login
@@ -21,7 +22,7 @@ router.post("/signup", userSignUp);
 // Route: GET /api/users/v1/forgot
 // Desc: Forgot password to check if the user email is in the db.
 // Access: PUBLIC
-router.get("/forgot", forgotPassword);
+router.get("/forgot", checkUser);
 
 // Route: PATCH /api/users/v1/forgot/:token
 // Desc: Forgot password endpoint for changing or updating password
