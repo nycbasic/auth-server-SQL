@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const User = require("../../../models/Users");
 
 const userLogin = async (req, res) => {
@@ -12,15 +13,21 @@ const userLogin = async (req, res) => {
 
   try {
     const { dataValues } = user;
-    if (dataValues.password === password) {
-      return res.status(201).json({
-        message: "Successfully logged in!",
-        token: "some jwt",
+    bcrypt.compare(password, dataValues.password, (err, result) => {
+      if (err) {
+        return res.status(400).send(err);
+      }
+      if (result) {
+        return res.status(201).json({
+          message: "Successfully logged in!",
+          token: "some jwt",
+        });
+      }
+      return res.status(400).json({
+        message: "Incorrect password!",
       });
-    }
-    return res.status(400).json({
-      message: "Incorrect password!",
     });
+    console.log("INSIDE BCRYPT METHOD");
   } catch (error) {
     return res.status(400).json({
       error,
@@ -39,20 +46,31 @@ const userSignUp = async (req, res) => {
   }
 
   try {
-    const success = await User.create({ firstName, lastName, email, password });
-    if (success) {
-      return res.status(201).json({
-        message: "User created!",
+    bcrypt.hash(password, 10, (err, hash) => {
+      if (err) {
+        return res.status(400).json({
+          error: err,
+        });
+      }
+      User.create({
+        firstName,
+        lastName,
+        email,
+        password: hash,
       });
-    }
-  } catch (err) {
+    });
+    return res.status(201).json({
+      message: "User created!",
+    });
+  } catch (error) {
     return res.status(400).json({
-      error: err,
+      error,
     });
   }
 };
 
 const checkUser = (req, res) => {
+  console.log(req.body);
   return res.status(200).json({
     message: "Check if the user exist for forgot password end point success!",
   });
