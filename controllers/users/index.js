@@ -46,28 +46,25 @@ const userSignUp = async (req, res) => {
     });
   }
 
+  // figuring out how to use the try/catch block
+  const hash = await bcrypt.hash(password, 10);
+  const newUser = await User.create({
+    firstName,
+    lastName,
+    email,
+    password: hash,
+  });
+
   try {
-    const hash = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      firstName,
-      lastName,
-      email,
-      password: hash,
+    const { id, firstName, lastName } = newUser;
+
+    return res.status(201).json({
+      message: {
+        id,
+        firstName,
+        lastName,
+      },
     });
-
-    const payload = {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName
-    }
-
-    // return res.status(201).json({
-    //   message: {
-    //     id: user.id,
-    //     firstName: user.firstName,
-    //     lastName: user.lastName,
-    //   },
-    // });
   } catch (error) {
     return res.status(400).json({
       error,

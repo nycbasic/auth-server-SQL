@@ -12,9 +12,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 
-db
-  .authenticate()
-  .then(() => console.log("connected to PostGRES-SQL"))
+db.authenticate()
+  .then(db.sync({force: false}))
+  .then(() => console.log("Connected to PostGRES & Model Synced!"))
   .catch((err) => {
     console.log(err);
   });
