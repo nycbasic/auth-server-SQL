@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
-const User = require("../../../models/Users");
+const jwt = require("jsonwebtoken");
+const User = require("../../models/Users");
 
 const userLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -13,11 +14,11 @@ const userLogin = async (req, res) => {
 
   try {
     const { dataValues } = user;
-    bcrypt.compare(password, dataValues.password, (err, result) => {
+    bcrypt.compare(password, dataValues.password, (err, success) => {
       if (err) {
         return res.status(400).send(err);
       }
-      if (result) {
+      if (success) {
         return res.status(201).json({
           message: "Successfully logged in!",
           token: "some jwt",
@@ -46,22 +47,27 @@ const userSignUp = async (req, res) => {
   }
 
   try {
-    bcrypt.hash(password, 10, (err, hash) => {
-      if (err) {
-        return res.status(400).json({
-          error: err,
-        });
-      }
-      User.create({
-        firstName,
-        lastName,
-        email,
-        password: hash,
-      });
+    const hash = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      password: hash,
     });
-    return res.status(201).json({
-      message: "User created!",
-    });
+
+    const payload = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName
+    }
+
+    // return res.status(201).json({
+    //   message: {
+    //     id: user.id,
+    //     firstName: user.firstName,
+    //     lastName: user.lastName,
+    //   },
+    // });
   } catch (error) {
     return res.status(400).json({
       error,

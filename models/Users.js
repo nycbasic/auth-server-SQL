@@ -2,6 +2,12 @@ const { DataTypes } = require("sequelize");
 const db = require("../config/sequelize");
 
 const User = db.define("User", {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV1,
+    primaryKey: true,
+    allowNull: false,
+  },
   firstName: {
     type: DataTypes.STRING,
     allowNull: false,

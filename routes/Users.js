@@ -7,7 +7,7 @@ const {
   forgotPassword,
   userDelete,
   checkUser,
-} = require("../helpers/api/users");
+} = require("../controllers/users");
 
 // Route: POST /api/users/v1/login
 // Desc: User login endpoint
