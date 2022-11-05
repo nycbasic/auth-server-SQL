@@ -9,6 +9,8 @@ const {
   checkUser,
 } = require("../controllers/users");
 
+router.get("/")
+
 // Route: POST /api/users/v1/login
 // Desc: User login endpoint
 // Access: PUBLIC

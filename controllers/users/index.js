@@ -14,15 +14,31 @@ const userLogin = async (req, res) => {
 
   try {
     const { dataValues } = user;
-    bcrypt.compare(password, dataValues.password, (err, success) => {
+    bcrypt.compare(password, dataValues.password, async (err, success) => {
       if (err) {
         return res.status(400).send(err);
       }
       if (success) {
-        return res.status(201).json({
-          message: "Successfully logged in!",
-          token: "some jwt",
-        });
+        const { id, firstName, lastName } = user;
+        const payload = {
+          id,
+          firstName,
+          lastName,
+        };
+        const token = await jwt.sign(payload, process.env.SECRET).split(".");
+
+        return res
+          .cookie(
+            "jwtheader",
+            { header: token[0], signature: token[2] },
+            { httpOnly: true, sameSite: true }
+          )
+          .cookie("payload", token[1])
+          .status(201)
+          .json({
+            message: "Successfully logged in!",
+            user,
+          });
       }
       return res.status(400).json({
         message: "Incorrect password!",
@@ -58,19 +74,26 @@ const userSignUp = async (req, res) => {
     const payload = {
       id: user.id,
       firstName: user.firstName,
-      lastName: user.lastName
-    }
+      lastName: user.lastName,
+    };
 
-    // return res.status(201).json({
-    //   message: {
-    //     id: user.id,
-    //     firstName: user.firstName,
-    //     lastName: user.lastName,
-    //   },
-    // });
+    const token = await jwt.sign(payload, process.env.SECRET).split(".");
+
+    return res
+      .cookie(
+        "jwtheader",
+        { header: token[0], signature: token[2] },
+        { httpOnly: true, sameSite: true }
+      )
+      .cookie("payload", token[1])
+      .status(200)
+      .json({
+        token,
+      });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({
-      error,
+      error: "Something went wrong",
     });
   }
 };
@@ -95,6 +118,12 @@ const userDelete = (req, res) => {
     data: req.body,
   });
 };
+
+
+// Test Controller
+const test = (req, res) => {
+  
+}
 
 module.exports = {
   userLogin,
