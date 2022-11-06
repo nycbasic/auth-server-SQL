@@ -1,5 +1,7 @@
 const express = require("express");
+const passport = require("passport");
 const router = express.Router();
+const auth = passport.authenticate("jwt", { session: false });
 
 const {
   userLogin,
@@ -7,9 +9,10 @@ const {
   forgotPassword,
   userDelete,
   checkUser,
+  test,
 } = require("../controllers/users");
 
-router.get("/")
+router.get("/", auth, test);
 
 // Route: POST /api/users/v1/login
 // Desc: User login endpoint

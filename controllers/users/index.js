@@ -119,11 +119,12 @@ const userDelete = (req, res) => {
   });
 };
 
-
 // Test Controller
-const test = (req, res) => {
-  
-}
+const test = async (req, res) => {
+  return res.status(201).json({
+    message: "SUCCESS!!!",
+  });
+};
 
 module.exports = {
   userLogin,
@@ -131,4 +132,5 @@ module.exports = {
   forgotPassword,
   userDelete,
   checkUser,
+  test,
 };
