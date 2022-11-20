@@ -4,6 +4,11 @@ const User = require("../../models/Users");
 
 const userLogin = async (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({
+      error: "FROM USERLOGIN, NO EMAIL OR PASSWORD!",
+    });
+  }
   const user = await User.findOne({ where: { email } });
 
   if (!user) {
@@ -14,6 +19,7 @@ const userLogin = async (req, res) => {
 
   try {
     const { dataValues } = user;
+    // refactor to bring login data outside into a then block.
     bcrypt.compare(password, dataValues.password, async (err, success) => {
       if (err) {
         return res.status(400).send(err);
@@ -25,15 +31,11 @@ const userLogin = async (req, res) => {
           firstName,
           lastName,
         };
-        const token = await jwt.sign(payload, process.env.SECRET).split(".");
+        const token = await jwt.sign(payload, process.env.SECRET);
 
         return res
-          .cookie(
-            "jwtheader",
-            { header: token[0], signature: token[2] },
-            { httpOnly: true, sameSite: true }
-          )
-          .cookie("payload", token[1])
+          .cookie("jwt", token, { httpOnly: true, sameSite: true })
+          .cookie("payload", token.split(".")[1])
           .status(201)
           .json({
             message: "Successfully logged in!",
@@ -44,7 +46,6 @@ const userLogin = async (req, res) => {
         message: "Incorrect password!",
       });
     });
-    console.log("INSIDE BCRYPT METHOD");
   } catch (error) {
     return res.status(400).json({
       error,
@@ -77,15 +78,11 @@ const userSignUp = async (req, res) => {
       lastName: user.lastName,
     };
 
-    const token = await jwt.sign(payload, process.env.SECRET).split(".");
+    const token = await jwt.sign(payload, process.env.SECRET);
 
     return res
-      .cookie(
-        "jwtheader",
-        { header: token[0], signature: token[2] },
-        { httpOnly: true, sameSite: true }
-      )
-      .cookie("payload", token[1])
+      .cookie("jwt", token, { httpOnly: true, sameSite: true })
+      .cookie("payload", token.split(".")[1])
       .status(200)
       .json({
         token,
@@ -121,6 +118,8 @@ const userDelete = (req, res) => {
 
 // Test Controller
 const test = async (req, res) => {
+  console.log("FROM TEST CONTROLLER: ", req.user);
+  console.log("FROM TEST CONTROLLER: ", req.session);
   return res.status(201).json({
     message: "SUCCESS!!!",
   });
