@@ -11,13 +11,13 @@ module.exports = (passport) => {
         callbackURL:
           "http://localhost:3001/api/users/v1/auth/facebook/callback",
       },
-      (accessToken, refreshToken, profile, cb) => {
-        console.log("FROM FB STRATEGY: ", accessToken);
+      (accessToken, refreshToken, profile, done) => {
+        console.log("FROM FB STRATEGY - Refresh Token: ", refreshToken);
         // User.findOrCreate({ where: { id: profile.id } }, (err, user) => {
         //   console.log("FROM FB STRATEGY: ", user);
         //   return cb(err, user);
         // });
-        return cb(null, profile);
+        return done(null, { fb: { accessToken, profile } });
       }
     )
   );

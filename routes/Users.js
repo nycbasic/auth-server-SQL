@@ -2,13 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 const facebook = passport.authenticate("fb");
-const facebookAuthenticated = passport.authenticate("fb", {
-  successRedirect: "/success",
-  failureMessage: "Incorrect Credentials!",
-});
-const auth = passport.authenticate(["jwtcookie", "google", "fb"], {
-  session: false,
-});
+const google = passport.authenticate("google");
 
 const {
   userLogin,
@@ -19,19 +13,18 @@ const {
   test,
 } = require("../controllers/users");
 
-passport.serializeUser(function (user, cb) {
-  process.nextTick(function () {
-    cb(null, { id: user.id, username: user.username, name: user.name });
-  });
+passport.serializeUser((user, done) => {
+  console.log("FROM PASSPORT SERIALIZE: ", user);
+  // process.nextTick(function () {
+  //   const { id, username, displayName } = user;
+  //   done(null, { fb: { id, username, name: user.displayName } });
+  // });
+  return done(null, user);
 });
 
-passport.deserializeUser(function (user, cb) {
-  process.nextTick(function () {
-    return cb(null, user);
-  });
+passport.deserializeUser((user, done) => {
+  return done(null, user);
 });
-
-router.get("/test", facebook, test);
 
 // Route: POST /api/users/v1/login
 // Desc: User login endpoint without OAuth
@@ -41,7 +34,11 @@ router.post("/login", userLogin);
 // Facebook OAuth2.0
 router.get("/login/facebook", facebook);
 router.get("/auth/facebook/callback", facebook, (req, res) => {
-  res.redirect("/success");
+  console.log("FROM THE FACEBOOK CALLBACK ROUTE: ", req.user);
+  // res.user = req.user;
+  return res.json({
+    message: "Successfully logged in!",
+  });
 });
 
 router.post("/auth/facebook/callback/logout", (req, res, next) => {
@@ -50,6 +47,15 @@ router.post("/auth/facebook/callback/logout", (req, res, next) => {
       return next(err);
     }
     res.redirect("/");
+  });
+});
+
+// Google OAuth2.0
+router.get("/login/google", google);
+router.get("/auth/google/callback", google, (req, res, next) => {
+  console.log("FROM GOOGLE CALLBACK ROUTE: ", req.session);
+  return res.json({
+    message: "Successful Google login!",
   });
 });
 
@@ -71,11 +77,15 @@ router.patch("/forgot/:token", forgotPassword);
 // Route: DELETE /api/users/v1/delete/:userId
 // Desc: Delete user endpoint
 // Access: PRIVATE
-router.delete("/delete/:userId", userDelete);
+router.delete("/delete/:userId", facebook, userDelete);
 
 // Test function for middleware
 function fbOAuth(req, res, next) {
   console.log(req.isAuthenticated());
 }
+
+router.get("/test", facebook, (req, res) => {
+  console.log(req.session);
+});
 
 module.exports = router;

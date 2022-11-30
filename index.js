@@ -14,6 +14,7 @@ const cors = require("cors");
 const app = express();
 const port = process.env.PORT;
 const users = require("./routes/Users");
+const test = require("./routes/Test");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -42,12 +43,7 @@ app.use(cors());
 // });
 
 app.use("/api/users/v1", users);
-app.use("/success", (req, res) => {
-  console.log(req.session);
-  return res.json({
-    message: "Successfully logged in with FB OAuth!",
-  });
-});
+app.use(test);
 
 db.authenticate()
   .then(() => console.log("connected to PostGRES-SQL"))

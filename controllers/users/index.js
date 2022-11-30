@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/Users");
+const { fbAuth } = require("../../middleware");
 
 const userLogin = async (req, res) => {
   const { email, password } = req.body;
