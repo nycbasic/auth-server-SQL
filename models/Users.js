@@ -18,13 +18,20 @@ const User = db.define("User", {
   },
   email: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+  },
+  facebook: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  google: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 });
-
 
 module.exports = User;

@@ -11,13 +11,24 @@ module.exports = (passport) => {
         callbackURL:
           "http://localhost:3001/api/users/v1/auth/facebook/callback",
       },
-      (accessToken, refreshToken, profile, done) => {
-        console.log("FROM FB STRATEGY - Refresh Token: ", refreshToken);
-        // User.findOrCreate({ where: { id: profile.id } }, (err, user) => {
-        //   console.log("FROM FB STRATEGY: ", user);
-        //   return cb(err, user);
-        // });
-        return done(null, { fb: { accessToken, profile } });
+      async (accessToken, refreshToken, profile, done) => {
+        const { id, displayName } = profile;
+        const firstName = displayName.split(" ")[0];
+        const lastName = displayName.split(" ")[1];
+
+        try {
+          const user = await User.findOrCreate({
+            where: { facebook: profile.id },
+            defaults: {
+              firstName,
+              lastName,
+              facebook: id,
+            },
+          });
+          return done(null, { fb: { accessToken, user } });
+        } catch (err) {
+          return done(err, null);
+        }
       }
     )
   );

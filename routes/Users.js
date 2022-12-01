@@ -79,13 +79,5 @@ router.patch("/forgot/:token", forgotPassword);
 // Access: PRIVATE
 router.delete("/delete/:userId", facebook, userDelete);
 
-// Test function for middleware
-function fbOAuth(req, res, next) {
-  console.log(req.isAuthenticated());
-}
-
-router.get("/test", facebook, (req, res) => {
-  console.log(req.session);
-});
 
 module.exports = router;

@@ -48,7 +48,7 @@ app.use(test);
 db.authenticate()
   .then(() => console.log("connected to PostGRES-SQL"))
   .then(() => {
-    db.sync();
+    db.sync({ alter: true });
   })
   .then(() => {
     app.listen(port, () => {
