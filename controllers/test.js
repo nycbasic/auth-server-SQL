@@ -7,8 +7,9 @@ const success = (req, res, next) => {
 };
 
 const testPersist = (req, res, next) => {
-  console.log("FROM TEST PERSIST DUMMY ROUTE - user", req.user);
+  //console.log("FROM TEST PERSIST DUMMY ROUTE - user", req.user.fb);
   console.log("FROM TEST PERSIST DUMMY ROUTE - session", req.session);
+  console.log("FROM TEST PERSIST DUMMY ROUTE - cookie", req.cookies);
   return res.json({
     message: "Testing persist",
   });

@@ -1,5 +1,5 @@
 const FbStrategy = require("passport-facebook").Strategy;
-const User = require("../../models/Users");
+const Users = require("../../models/Users");
 
 module.exports = (passport) => {
   passport.use(
@@ -17,12 +17,12 @@ module.exports = (passport) => {
         const lastName = displayName.split(" ")[1];
 
         try {
-          const user = await User.findOrCreate({
-            where: { facebook: profile.id },
+          const user = await Users.findOrCreate({
+            where: { facebook: accessToken },
             defaults: {
               firstName,
               lastName,
-              facebook: id,
+              facebook: accessToken,
             },
           });
           return done(null, { fb: { accessToken, user } });

@@ -1,5 +1,5 @@
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
-// const User = require("../../models/Users");
+const Users = require("../../models/Users");
 
 module.exports = (passport) => {
   passport.use(
@@ -13,7 +13,8 @@ module.exports = (passport) => {
         scope: ["profile"],
       },
       (req, accessToken, refreshToken, user, done) => {
-        console.log(accessToken);
+        console.log("FROM GOOGLE OAUTH STRATEGY - access token: ", accessToken);
+        console.log("FROM GOOGLE OAUTH STRATETY - user: ", user);
         // profile param will fill information about the user
         // User.findOrCreate({ where: { id: profile.id } }, (err, user) => {
         //   return done(err, user);
