@@ -10,8 +10,8 @@ const {
   forgotPassword,
   userDelete,
   checkUser,
-  test,
 } = require("../controllers/users");
+const { success } = require("../controllers/test");
 
 passport.serializeUser((user, done) => {
   console.log("FROM PASSPORT SERIALIZE: ", user);
@@ -33,13 +33,7 @@ router.post("/login", userLogin);
 
 // Facebook OAuth2.0
 router.get("/login/facebook", facebook);
-router.get("/auth/facebook/callback", facebook, (req, res) => {
-  console.log("FROM THE FACEBOOK CALLBACK ROUTE: ", req.user);
-  // res.user = req.user;
-  return res.json({
-    message: "Successfully logged in!",
-  });
-});
+router.get("/auth/facebook/callback", facebook);
 
 router.post("/auth/facebook/callback/logout", (req, res, next) => {
   req.logout((err) => {
@@ -78,6 +72,5 @@ router.patch("/forgot/:token", forgotPassword);
 // Desc: Delete user endpoint
 // Access: PRIVATE
 router.delete("/delete/:userId", facebook, userDelete);
-
 
 module.exports = router;
