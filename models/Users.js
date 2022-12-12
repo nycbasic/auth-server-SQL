@@ -18,11 +18,23 @@ const User = db.define("User", {
   },
   email: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+  },
+  validated: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+  },
+  facebook: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  google: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 });
 

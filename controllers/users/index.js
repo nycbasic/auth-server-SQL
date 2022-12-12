@@ -1,9 +1,15 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const passport = require("passport");
 const User = require("../../models/Users");
 
 const userLogin = async (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({
+      error: "FROM USERLOGIN, NO EMAIL OR PASSWORD!",
+    });
+  }
   const user = await User.findOne({ where: { email } });
 
   if (!user) {
@@ -14,21 +20,36 @@ const userLogin = async (req, res) => {
 
   try {
     const { dataValues } = user;
-    bcrypt.compare(password, dataValues.password, (err, success) => {
+    // refactor to bring login data outside into a then block.
+    bcrypt.compare(password, dataValues.password, async (err, success) => {
       if (err) {
         return res.status(400).send(err);
       }
       if (success) {
-        return res.status(201).json({
-          message: "Successfully logged in!",
-          token: "some jwt",
+        const { id, firstName, lastName } = user;
+        const payload = {
+          id,
+          firstName,
+          lastName,
+        };
+        const token = await jwt.sign(payload, process.env.SECRET);
+
+        res
+          .cookie("jwt", token, { httpOnly: true, sameSite: true })
+          .cookie("payload", token.split(".")[1])
+          .status(201)
+          .json({
+            message: "Successfully logged in!",
+            user,
+          });
+        return passport.authenticate("jwtcookie", {
+          successRedirect: "http://localhost:3001/test",
         });
       }
       return res.status(400).json({
         message: "Incorrect password!",
       });
     });
-    console.log("INSIDE BCRYPT METHOD");
   } catch (error) {
     return res.status(400).json({
       error,
@@ -46,28 +67,34 @@ const userSignUp = async (req, res) => {
     });
   }
 
-  // figuring out how to use the try/catch block
-  const hash = await bcrypt.hash(password, 10);
-  const newUser = await User.create({
-    firstName,
-    lastName,
-    email,
-    password: hash,
-  });
-
   try {
-    const { id, firstName, lastName } = newUser;
-
-    return res.status(201).json({
-      message: {
-        id,
-        firstName,
-        lastName,
-      },
+    const hash = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      password: hash,
     });
+
+    const payload = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    };
+
+    const token = await jwt.sign(payload, process.env.SECRET);
+
+    return res
+      .cookie("jwt", token, { httpOnly: true, sameSite: true })
+      .cookie("payload", token.split(".")[1])
+      .status(200)
+      .json({
+        token,
+      });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({
-      error,
+      error: "Something went wrong",
     });
   }
 };
@@ -93,10 +120,20 @@ const userDelete = (req, res) => {
   });
 };
 
+// Test Controller
+const test = async (req, res) => {
+  console.log("FROM TEST CONTROLLER: ", req.user);
+  console.log("FROM TEST CONTROLLER: ", req.session);
+  return res.status(201).json({
+    message: "SUCCESS!!!",
+  });
+};
+
 module.exports = {
   userLogin,
   userSignUp,
   forgotPassword,
   userDelete,
   checkUser,
+  test,
 };
