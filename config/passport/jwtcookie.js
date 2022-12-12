@@ -19,19 +19,20 @@ const token = {
 module.exports = (passport) => {
   passport.use(
     "jwtcookie",
-    new JwtStrategy(token, (payload, done) => {
-      User.findByPk(payload.id)
-        .then((user) => {
-          const { id, firstName, lastName, email } = user;
-          if (user) {
-            return done(null, { id, firstName, lastName, email });
-          } else {
-            return done(null, false);
-          }
-        })
-        .catch((err) => {
-          return err;
-        });
+    new JwtStrategy(token, async (payload, done) => {
+      try {
+         const user = await User.findByPk(payload.id);
+         if(user) {
+          const {id, firstName, lastName, email} = user;
+          console.log("JWT STRAT USER FOUND!")
+          return done(null, {id, firstName, lastName, email})
+         } else {
+          console.log("USER NOT FOUND")
+          return done(null, false)
+         }
+      }catch(err) {
+        console.log(err)
+      }
     })
   );
 };

@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const User = require("../../models/Users");
 
-const userLogin = async (req, res) => {
+const userLogin = async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({
@@ -20,7 +20,6 @@ const userLogin = async (req, res) => {
 
   try {
     const { dataValues } = user;
-    // refactor to bring login data outside into a then block.
     bcrypt.compare(password, dataValues.password, async (err, success) => {
       if (err) {
         return res.status(400).send(err);
@@ -42,9 +41,7 @@ const userLogin = async (req, res) => {
             message: "Successfully logged in!",
             user,
           });
-        return passport.authenticate("jwtcookie", {
-          successRedirect: "http://localhost:3001/test",
-        });
+        return next();
       }
       return res.status(400).json({
         message: "Incorrect password!",

@@ -7,7 +7,7 @@ const fb = passport.authenticate("fb");
 const { success, testPersist } = require("../controllers/test");
 
 
-router.get("/success", jwt, success);
-router.get("/test", auth , testPersist);
+router.get("/success", auth, success);
+router.get("/test", auth, testPersist);
 
 module.exports = router;

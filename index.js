@@ -25,7 +25,7 @@ app.use(
   session({
     resave: false,
     saveUninitialized: true,
-    secret: "SECRET",
+    secret: process.env.SECRET,
   })
 );
 
@@ -37,7 +37,6 @@ require("./config/passport/jwtcookie")(passport);
 require("./config/passport/google")(passport);
 require("./config/passport/facebook")(passport);
 app.use(cors());
-
 
 // app.use((req, res, next) => {
 //   console.log(req.session);

@@ -1,11 +1,12 @@
+const e = require("express");
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 const facebookLogin = passport.authenticate("fb", { scope: "email" });
 const facebookCallback = passport.authenticate("fb", {
   successRedirect: "http://localhost:3001/test",
-  failureRedirect: "http://api/users/v1/login/facebook",
 });
+const jwt = passport.authenticate('jwtcookie');
 const google = passport.authenticate("google");
 
 const {
@@ -26,19 +27,22 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((user, done) => {
+  console.log("FROM PASSPORT DESERIALIZEUSER: ", user)
   return done(null, user);
 });
 
 // Route: POST /api/users/v1/login
 // Desc: User login endpoint without OAuth
 // Access: PUBLIC
-router.post("/login", userLogin);
+router.post("/login", userLogin, jwt, (req, res) => {
+  console.log("FROM LOGIN CONTROLLER", req.isAuthenticated())
+});
 
 // Facebook OAuth2.0
 router.get("/login/facebook", facebookLogin);
 router.get("/auth/facebook/callback", facebookCallback);
 
-router.post("/auth/facebook/callback/logout", (req, res, next) => {
+router.post("/auth/facebook/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) {
       return next(err);
