@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const Users = require("");
 
 const auth = async (req, res, next) => {
   console.log("FROM AUTH MIDDLEWARE: ", req.cookies);

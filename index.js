@@ -29,10 +29,10 @@ app.use(
   })
 );
 
-app.use(passport.authenticate("session"));
 // END
 
 app.use(passport.initialize());
+app.use(passport.session());
 require("./config/passport/jwtcookie")(passport);
 require("./config/passport/google")(passport);
 require("./config/passport/facebook")(passport);

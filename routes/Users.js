@@ -1,12 +1,12 @@
-const e = require("express");
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 const facebookLogin = passport.authenticate("fb", { scope: "email" });
 const facebookCallback = passport.authenticate("fb", {
+  scope: ["email"],
   successRedirect: "http://localhost:3001/test",
 });
-const jwt = passport.authenticate('jwtcookie');
+const jwt = passport.authenticate("jwtcookie");
 const google = passport.authenticate("google");
 
 const {
@@ -18,25 +18,19 @@ const {
 } = require("../controllers/users");
 
 passport.serializeUser((user, done) => {
-  console.log("FROM PASSPORT SERIALIZE: ", user);
-  // process.nextTick(function () {
-  //   const { id, username, displayName } = user;
-  //   done(null, { fb: { id, username, name: user.displayName } });
-  // });
+  console.log("FROM PASSPORT SERIALIZE: ", user.fb.user);
   return done(null, user);
 });
 
 passport.deserializeUser((user, done) => {
-  console.log("FROM PASSPORT DESERIALIZEUSER: ", user)
+  // console.log("FROM PASSPORT DESERIALIZEUSER: ", user.fb.user);
   return done(null, user);
 });
 
 // Route: POST /api/users/v1/login
 // Desc: User login endpoint without OAuth
 // Access: PUBLIC
-router.post("/login", userLogin, jwt, (req, res) => {
-  console.log("FROM LOGIN CONTROLLER", req.isAuthenticated())
-});
+router.post("/login", userLogin);
 
 // Facebook OAuth2.0
 router.get("/login/facebook", facebookLogin);

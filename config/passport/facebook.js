@@ -8,17 +8,19 @@ module.exports = (passport) => {
       {
         clientID: process.env.FACEBOOK_APP_ID,
         clientSecret: process.env.FACEBOOK_APP_SECRET,
-        callbackURL: "http://localhost:3001/auth/facebook/callback",
-        profileFields: ['email', 'displayName', 'picture.type(small)']
+        callbackURL:
+          "http://localhost:3001/api/users/v1/auth/facebook/callback",
+        profileFields: ["email", "displayName", "picture.type(small)"],
       },
       async (accessToken, refreshToken, profile, done) => {
-        const { id, displayName, email } = profile;
-        const firstName = displayName.split(" ")[0];
-        const lastName = displayName.split(" ")[1];
+        const { name, email } = profile._json;
+        const firstName = name.split(" ")[0];
+        const lastName = name.split(" ")[1];
+        console.log("FROM FACEBOOK STRATEGY: ", refreshToken);
 
         try {
           const user = await Users.findOrCreate({
-            where: { facebook: accessToken },
+            where: { email },
             defaults: {
               firstName,
               lastName,
@@ -26,7 +28,10 @@ module.exports = (passport) => {
               facebook: accessToken,
             },
           });
-          return done(null, { fb: { accessToken, user } });
+          console.log(user[0].dataValues)
+          // const {dataValues} = user;
+          // console.log("FROM FB STRATEGY", refreshToken)
+          // return done(null, { fb: {dataValues} });
         } catch (err) {
           return done(err, null);
         }
