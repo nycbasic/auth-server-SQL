@@ -1,5 +1,7 @@
+const passport = require("passport");
 const FbStrategy = require("passport-facebook").Strategy;
 const Users = require("../../models/Users");
+const jwt = require("jsonwebtoken");
 
 module.exports = (passport) => {
   passport.use(
@@ -28,10 +30,8 @@ module.exports = (passport) => {
               facebook: accessToken,
             },
           });
-          console.log(user[0].dataValues)
-          // const {dataValues} = user;
-          // console.log("FROM FB STRATEGY", refreshToken)
-          // return done(null, { fb: {dataValues} });
+          const { dataValues } = user[0];
+          return done(null, dataValues);
         } catch (err) {
           return done(err, null);
         }
@@ -39,3 +39,11 @@ module.exports = (passport) => {
     )
   );
 };
+
+passport.serializeUser((user, done) => {
+  return done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  return done(null, user);
+});

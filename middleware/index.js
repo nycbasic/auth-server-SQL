@@ -1,21 +1,12 @@
-const jwt = require("jsonwebtoken");
-
 const auth = async (req, res, next) => {
-  console.log("FROM AUTH MIDDLEWARE: ", req.cookies);
-  console.log("FROM AUTH MIDDLEWARE: ", req.isAuthenticated());
-  if (req.isAuthenticated()) {
+  const { jwt, payload } = req.cookies;
+  if (req.isAuthenticated() && req.user) {
     return next();
-  } else if (req.cookies.jwt) {
-    const token = req.cookies.jwt;
-    try {
-      const decoded = await jwt.verify(token, process.env.SECRET);
-    } catch (err) {
-      console.log(err);
-    }
+  } else if (!(req.isAuthenticated() && req.user) && jwt && payload) {
+    return next();
   }
-  return res.status(400).json({
-    message: "User not authorized!",
-  });
+  console.log("FAILED AT SESSION-AUTH!");
+  return res.sendStatus(401);
 };
 
 module.exports = auth;

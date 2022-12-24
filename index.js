@@ -20,7 +20,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-// Testing Facebook OAuth 2.0
 app.use(
   session({
     resave: false,
@@ -29,8 +28,6 @@ app.use(
   })
 );
 
-// END
-
 app.use(passport.initialize());
 app.use(passport.session());
 require("./config/passport/jwtcookie")(passport);
@@ -38,9 +35,6 @@ require("./config/passport/google")(passport);
 require("./config/passport/facebook")(passport);
 app.use(cors());
 
-// app.use((req, res, next) => {
-//   console.log(req.session);
-// });
 
 app.use("/api/users/v1", users);
 app.use(test);

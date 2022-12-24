@@ -1,13 +1,6 @@
 const express = require("express");
-const passport = require("passport");
+
 const router = express.Router();
-const facebookLogin = passport.authenticate("fb", { scope: "email" });
-const facebookCallback = passport.authenticate("fb", {
-  scope: ["email"],
-  successRedirect: "http://localhost:3001/test",
-});
-const jwt = passport.authenticate("jwtcookie");
-const google = passport.authenticate("google");
 
 const {
   userLogin,
@@ -17,15 +10,12 @@ const {
   checkUser,
 } = require("../controllers/users");
 
-passport.serializeUser((user, done) => {
-  console.log("FROM PASSPORT SERIALIZE: ", user.fb.user);
-  return done(null, user);
-});
-
-passport.deserializeUser((user, done) => {
-  // console.log("FROM PASSPORT DESERIALIZEUSER: ", user.fb.user);
-  return done(null, user);
-});
+const {
+  facebookLogin,
+  facebookCallback,
+  googleLogin,
+  jwtCookie,
+} = require("../controllers/oauth");
 
 // Route: POST /api/users/v1/login
 // Desc: User login endpoint without OAuth
@@ -34,25 +24,16 @@ router.post("/login", userLogin);
 
 // Facebook OAuth2.0
 router.get("/login/facebook", facebookLogin);
-router.get("/auth/facebook/callback", facebookCallback);
-
-router.post("/auth/facebook/logout", (req, res, next) => {
-  req.logout((err) => {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/");
-  });
-});
+router.get("/auth/facebook/callback", facebookCallback, jwtCookie);
 
 // Google OAuth2.0
-router.get("/login/google", google);
-router.get("/auth/google/callback", google, (req, res, next) => {
-  console.log("FROM GOOGLE CALLBACK ROUTE: ", req.session);
-  return res.json({
-    message: "Successful Google login!",
-  });
-});
+router.get("/login/google", googleLogin);
+// router.get("/auth/google/callback", google, (req, res, next) => {
+//   console.log("FROM GOOGLE CALLBACK ROUTE: ", req.session);
+//   return res.json({
+//     message: "Successful Google login!",
+//   });
+// });
 
 // Route: POST /api/users/v1/signup
 // Desc: User sign-up endpoint

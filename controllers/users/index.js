@@ -32,7 +32,7 @@ const userLogin = async (req, res, next) => {
         };
         const token = await jwt.sign(payload, process.env.SECRET);
 
-        res
+        return res
           .cookie("jwt", token, { httpOnly: true, sameSite: true })
           .cookie("payload", token.split(".")[1])
           .status(201)
@@ -40,16 +40,13 @@ const userLogin = async (req, res, next) => {
             message: "Successfully logged in!",
             user,
           });
-        return next();
       }
       return res.status(400).json({
         message: "Incorrect password!",
       });
     });
   } catch (error) {
-    return res.status(400).json({
-      error,
-    });
+    return res.sendStatus(400);
   }
 };
 
