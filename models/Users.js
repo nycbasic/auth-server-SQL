@@ -28,14 +28,10 @@ const User = db.define("User", {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  facebook: {
+  accessToken: {
     type: DataTypes.STRING,
     allowNull: true,
-  },
-  google: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
+  }
 });
 
 module.exports = User;

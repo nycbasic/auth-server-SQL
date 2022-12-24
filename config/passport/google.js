@@ -10,16 +10,32 @@ module.exports = (passport) => {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: "http://localhost:3001/api/users/v1/auth/google/callback",
         passReqToCallback: true,
-        scope: ["profile"],
+        scope: [
+          "https://www.googleapis.com/auth/userinfo.profile",
+          "https://www.googleapis.com/auth/userinfo.email",
+        ],
       },
-      (req, accessToken, refreshToken, user, done) => {
+      async (req, accessToken, refreshToken, user, done) => {
         console.log("FROM GOOGLE OAUTH STRATEGY - access token: ", accessToken);
         console.log("FROM GOOGLE OAUTH STRATETY - user: ", user);
+        const { given_name, family_name, email } = user;
         // profile param will fill information about the user
-        // User.findOrCreate({ where: { id: profile.id } }, (err, user) => {
-        //   return done(err, user);
-        // });
-        return done(null, user);
+        try {
+          const user = await Users.findOrCreate({
+            where: { email },
+            defaults: {
+              firstName: given_name,
+              lastName: family_name,
+              email,
+              accessToken,
+              validated: true,
+            },
+          });
+          const { dataValues } = user[0];
+          return done(null, dataValues);
+        } catch (err) {
+          return done(err, null);
+        }
       }
     )
   );

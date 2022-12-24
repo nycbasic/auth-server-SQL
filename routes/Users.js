@@ -1,5 +1,4 @@
 const express = require("express");
-
 const router = express.Router();
 
 const {
@@ -10,12 +9,7 @@ const {
   checkUser,
 } = require("../controllers/users");
 
-const {
-  facebookLogin,
-  facebookCallback,
-  googleLogin,
-  jwtCookie,
-} = require("../controllers/oauth");
+const { facebook, google } = require("../controllers/oauth");
 
 // Route: POST /api/users/v1/login
 // Desc: User login endpoint without OAuth
@@ -23,17 +17,12 @@ const {
 router.post("/login", userLogin);
 
 // Facebook OAuth2.0
-router.get("/login/facebook", facebookLogin);
-router.get("/auth/facebook/callback", facebookCallback, jwtCookie);
+router.get("/login/facebook", facebook);
+router.get("/auth/facebook/callback", facebook);
 
 // Google OAuth2.0
-router.get("/login/google", googleLogin);
-// router.get("/auth/google/callback", google, (req, res, next) => {
-//   console.log("FROM GOOGLE CALLBACK ROUTE: ", req.session);
-//   return res.json({
-//     message: "Successful Google login!",
-//   });
-// });
+router.get("/login/google", google);
+router.get("/auth/google/callback", google);
 
 // Route: POST /api/users/v1/signup
 // Desc: User sign-up endpoint

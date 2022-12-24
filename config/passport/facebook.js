@@ -18,7 +18,6 @@ module.exports = (passport) => {
         const { name, email } = profile._json;
         const firstName = name.split(" ")[0];
         const lastName = name.split(" ")[1];
-        console.log("FROM FACEBOOK STRATEGY: ", refreshToken);
 
         try {
           const user = await Users.findOrCreate({
@@ -27,7 +26,8 @@ module.exports = (passport) => {
               firstName,
               lastName,
               email,
-              facebook: accessToken,
+              accessToken,
+              validated: true
             },
           });
           const { dataValues } = user[0];

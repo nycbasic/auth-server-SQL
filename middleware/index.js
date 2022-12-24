@@ -5,7 +5,6 @@ const auth = async (req, res, next) => {
   } else if (!(req.isAuthenticated() && req.user) && jwt && payload) {
     return next();
   }
-  console.log("FAILED AT SESSION-AUTH!");
   return res.sendStatus(401);
 };
 
