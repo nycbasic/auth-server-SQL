@@ -50,7 +50,9 @@ const google = (req, res, next) => {
   })(req, res, next);
 };
 
+
+
 module.exports = {
   google,
-  facebook,
+  facebook
 };

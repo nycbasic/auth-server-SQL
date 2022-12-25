@@ -1,15 +1,13 @@
 const success = (req, res, next) => {
   return res.json({
-    message: "Successfully logged in with OAuth!",
+    message: req.user,
   });
 };
 
 const testPersist = (req, res, next) => {
-  //console.log("FROM TEST PERSIST DUMMY ROUTE - user", req.user.fb);
-  // console.log("FROM TEST PERSIST DUMMY ROUTE - session", req.session);
-  //console.log("FROM TEST PERSIST DUMMY ROUTE - cookie", req.cookies);
+  console.log("FROM TEST PERSIST DUMMY ROUTE - user", req.user);
   return res.json({
-    message: "Testing persist",
+    message: req.user,
   });
 };
 

@@ -16,10 +16,7 @@ module.exports = (passport) => {
         ],
       },
       async (req, accessToken, refreshToken, user, done) => {
-        console.log("FROM GOOGLE OAUTH STRATEGY - access token: ", accessToken);
-        console.log("FROM GOOGLE OAUTH STRATETY - user: ", user);
         const { given_name, family_name, email } = user;
-        // profile param will fill information about the user
         try {
           const user = await Users.findOrCreate({
             where: { email },

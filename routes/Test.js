@@ -3,11 +3,10 @@ const passport = require("passport");
 const router = express.Router();
 const auth = require("../middleware");
 const jwt = passport.authenticate("jwtcookie");
-const fb = passport.authenticate("fb");
 const { success, testPersist } = require("../controllers/test");
 
-router.get("/success", auth, jwt, success);
-router.get("/test", auth, jwt, testPersist);
+router.get("/success", auth, success);
+router.get("/test", auth, testPersist);
 
 router.get("/logout", (req, res) => {
   res.clearCookie("jwt").clearCookie("payload");
@@ -17,7 +16,7 @@ router.get("/logout", (req, res) => {
     }
   });
   return res.status(200).json({
-    loggedOut: true,
+    authenticated: false,
   });
 });
 
