@@ -46,32 +46,38 @@ const checkUser = async (req, res) => {
   }
 };
 
-const forgotPassword = (req, res) => {
+const forgotPassword = async (req, res) => {
   // Check if reset token exist and verify user
   const {
     params: { token },
-    body: { newPassword, confirmPassword },
+    body: { newPassword },
   } = req;
   try {
     // If token matches user and user information is correct
-    const user = User.findOne({ where: { resetToken: req.token } });
-    // accept password change
-    // Send confirmation
+    const user = await User.findOne({ where: { resetToken: token } });
+
+    console.log("FROM FORGOT PASSWORD CONTROLLER - user: ", user);
+    if (user.accessToken === token) {
+      // accept password change
+      user.password = newPassword;
+      user.save();
+      // Send confirmation
+      return res.status(200).json({
+        message: "forgot password endpoint success",
+        data: req.body,
+      });
+    }
+
     // If there's an issue, send error
   } catch (err) {
     return res.sendStatus(400);
   }
-
-  return res.status(200).json({
-    message: "forgot password endpoint success",
-    data: req.body,
-  });
 };
 
 const userDelete = (req, res) => {
   return res.status(200).json({
     message: "delete user endpoint success",
-    data: req.body,
+    data: newPassword,
   });
 };
 
