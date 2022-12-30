@@ -3,7 +3,7 @@
 
 const crypto = require("crypto");
 const User = require("../../models/Users");
-const { transporter, resetPasswordEmail } = require("../../config/mail");
+const { transporter, resetPasswordEmail } = require("../../config/nodemailer");
 
 const checkUser = async (req, res) => {
   const { email } = req.body;
@@ -38,7 +38,7 @@ const checkUser = async (req, res) => {
     // return response that the user does not exist
     return res.status(400).json({
       status:
-        "User cannot reset password! Either user already received email or useer does not exist",
+        "User cannot reset password! User signed up with Facebook or Google",
     });
   } catch (err) {
     console.log(err);
