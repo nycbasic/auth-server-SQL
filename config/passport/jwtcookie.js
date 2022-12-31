@@ -20,7 +20,6 @@ module.exports = (passport) => {
   passport.use(
     "jwtcookie",
     new JwtStrategy(token, async (payload, done) => {
-      console.log("JWT STRATEGY FIRES!~~!")
       try {
         const user = await User.findByPk(payload.id);
         if (user) {

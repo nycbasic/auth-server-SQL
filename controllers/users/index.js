@@ -1,4 +1,4 @@
-// const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 // const jwt = require("jsonwebtoken");
 
 const crypto = require("crypto");
@@ -56,19 +56,21 @@ const forgotPassword = async (req, res) => {
     // If token matches user and user information is correct
     const user = await User.findOne({ where: { resetToken: token } });
 
-    console.log("FROM FORGOT PASSWORD CONTROLLER - user: ", user);
-    if (user.accessToken === token) {
+    if (user) {
       // accept password change
-      user.password = newPassword;
+      const hash = await bcrypt.hash(newPassword, 20);
+      user.password = hash;
+      user.resetToken = null;
       user.save();
       // Send confirmation
       return res.status(200).json({
         message: "forgot password endpoint success",
-        data: req.body,
       });
     }
-
     // If there's an issue, send error
+    return res.status(400).json({
+      message: "User not found",
+    });
   } catch (err) {
     return res.sendStatus(400);
   }

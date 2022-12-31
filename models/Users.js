@@ -34,8 +34,8 @@ const User = db.define("User", {
   },
   resetToken: {
     type: DataTypes.STRING,
-    allowNull: true
-  }
+    allowNull: true,
+  },
 });
 
 module.exports = User;
