@@ -20,10 +20,6 @@ const User = db.define("User", {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  validated: {
-    type: DataTypes.BOOLEAN,
-    allowNull: true,
-  },
   password: {
     type: DataTypes.STRING,
     allowNull: true,
@@ -35,7 +31,7 @@ const User = db.define("User", {
   resetToken: {
     type: DataTypes.STRING,
     allowNull: true,
-  },
+  }
 });
 
 module.exports = User;

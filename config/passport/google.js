@@ -1,3 +1,4 @@
+const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const Users = require("../../models/Users");
 
@@ -37,3 +38,11 @@ module.exports = (passport) => {
     )
   );
 };
+
+passport.serializeUser((user, done) => {
+  return done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  return done(null, user);
+});

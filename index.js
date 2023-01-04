@@ -37,9 +37,9 @@ app.use("/api/users/v1", users);
 db.authenticate()
   .then(() => console.log("connected to PostGRES-SQL"))
   .then(() => {
-    db.sync({ force: true });
+    // db.sync({ force: true });
     // db.sync({ alter: true });
-    // db.sync();
+    db.sync();
   })
   .then(() => {
     app.listen(port, () => {
