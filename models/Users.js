@@ -31,7 +31,11 @@ const User = db.define("User", {
   resetToken: {
     type: DataTypes.STRING,
     allowNull: true,
-  }
+  },
+  resetExpiration: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 });
 
 module.exports = User;

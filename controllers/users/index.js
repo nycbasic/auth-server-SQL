@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const User = require("../../models/Users");
 const { transporter, resetPasswordEmail } = require("../../config/nodemailer");
+const { unsubscribe } = require("../../routes/Test");
 
 const checkUser = async (req, res) => {
   const { email } = req.body;
@@ -15,6 +16,7 @@ const checkUser = async (req, res) => {
       // add token to user profile
       if (!user.resetToken) {
         user.resetToken = token;
+        user.resetExpiration = Date.now + 1800000;
         user.save();
       } else {
         return res.status(400).json({
@@ -53,8 +55,15 @@ const forgotPassword = async (req, res) => {
   try {
     // If token matches user and user information is correct
     const user = await User.findOne({ where: { resetToken: token } });
-
-    if (user) {
+    if (Date.now() > user.resetExpiration) {
+      user.resetToken = null;
+      user.resetExpiration = null;
+      user.save();
+      return res.status(403).json({
+        message: "Password reset expired!",
+      });
+    }
+    if (user.resetToken) {
       // accept password change
       const hash = await bcrypt.hash(newPassword, 20);
       user.password = hash;
